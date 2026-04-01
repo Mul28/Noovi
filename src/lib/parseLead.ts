@@ -3,6 +3,7 @@ export type ParsedLead = {
   email: string;
   trade: string;
   message: string;
+  previewUrl: string;
 };
 
 const INVALID_EMAILS = new Set(["", "unknown", "no email"]);
@@ -25,6 +26,7 @@ export function parseLead(description: string): ParsedLead {
     name: fields.name || "",
     email: normalizedEmail,
     trade: fields.trade || "",
-    message: fields.message || ""
+    message: fields.message || "",
+    previewUrl: fields["preview url"] || fields["preview_url"] || ""
   };
 }

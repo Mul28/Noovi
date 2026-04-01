@@ -1,16 +1,22 @@
 import { sendEmail } from "./lib/email.js";
 import { addIssueComment, getIssue } from "./lib/paperclip.js";
 import { parseLead } from "./lib/parseLead.js";
+import {
+  buildIntakeReminderEmail,
+  buildPreviewReadyEmail,
+  buildWelcomeEmail,
+  type NooviEmailType
+} from "./lib/templates.js";
 
-export type SendWelcomeEmailForIssueInput = {
+export type SendIssueEmailForIssueInput = {
   issueId: string;
 };
 
-export type SendWelcomeEmailForIssueResult = {
+export type SendIssueEmailResult = {
   ok: boolean;
   recipient?: string;
   subject: string;
-  emailType: "welcome";
+  emailType: NooviEmailType;
   messageId?: string;
   error?: string;
   issueCommentPosted: boolean;
@@ -20,44 +26,20 @@ function getIntakeUrl(): string {
   return process.env.INTAKE_FORM_URL || "https://noovi.com.au";
 }
 
-function buildWelcomeEmail(firstName: string, intakeUrl: string) {
-  const subject = "Thanks for your enquiry";
-  const text = `Hi ${firstName},
-
-Thanks for getting in touch with Noovi.
-
-We build done-for-you websites for Australian tradies, and we handle the whole process by email, so there's no need for calls or meetings.
-
-To get started, please complete this short intake form:
-${intakeUrl}
-
-Once we have your details, we can prepare the next step.
-
-Reply to this email if you have any questions.
-
-Thanks,
-Noovi
-
-If you'd prefer not to hear from us again, just reply with unsubscribe.`;
-
-  const html = `<p>Hi ${firstName},</p>
-<p>Thanks for getting in touch with Noovi.</p>
-<p>We build done-for-you websites for Australian tradies, and we handle the whole process by email, so there's no need for calls or meetings.</p>
-<p>To get started, please complete this short intake form:<br><a href="${intakeUrl}">${intakeUrl}</a></p>
-<p>Once we have your details, we can prepare the next step.</p>
-<p>Reply to this email if you have any questions.</p>
-<p>Thanks,<br>Noovi</p>
-<p>If you'd prefer not to hear from us again, just reply with unsubscribe.</p>`;
-
-  return { subject, text, html };
+function getFromName(): string {
+  return process.env.EMAIL_FROM_NAME || "Noovi";
 }
 
-export async function send_welcome_email_for_issue(
-  input: SendWelcomeEmailForIssueInput
-): Promise<SendWelcomeEmailForIssueResult> {
+function getFirstName(name: string): string {
+  return (name.split(/\s+/).filter(Boolean)[0] || "there").trim();
+}
+
+async function sendIssueEmail(
+  input: SendIssueEmailForIssueInput,
+  emailType: NooviEmailType
+): Promise<SendIssueEmailResult> {
   const issue = await getIssue(input.issueId);
   const lead = parseLead(issue.description || "");
-  const subject = "Thanks for your enquiry";
 
   if (!lead.email) {
     await addIssueComment(
@@ -67,49 +49,76 @@ export async function send_welcome_email_for_issue(
 
     return {
       ok: false,
-      subject,
-      emailType: "welcome",
+      subject: "No subject",
+      emailType,
       error: "No usable recipient email",
       issueCommentPosted: true
     };
   }
 
-  const firstName = (lead.name.split(/\s+/).filter(Boolean)[0] || "there").trim();
-  const { text, html } = buildWelcomeEmail(firstName, getIntakeUrl());
-
   try {
+    const email =
+      emailType === "welcome"
+        ? buildWelcomeEmail({
+            firstName: getFirstName(lead.name),
+            intakeUrl: getIntakeUrl(),
+            fromName: getFromName()
+          })
+        : emailType === "intake_reminder"
+          ? buildIntakeReminderEmail({
+              firstName: getFirstName(lead.name),
+              intakeUrl: getIntakeUrl(),
+              fromName: getFromName()
+            })
+          : buildPreviewReadyEmail({
+              firstName: getFirstName(lead.name),
+              intakeUrl: getIntakeUrl(),
+              previewUrl: lead.previewUrl,
+              fromName: getFromName()
+            });
+
     const result = await sendEmail({
       to: lead.email,
-      subject,
-      body: text,
-      html
+      subject: email.subject,
+      body: email.text,
+      html: email.html
     });
 
     await addIssueComment(
       input.issueId,
       `Recipient: ${lead.email}
-Subject: ${subject}
-Email type: welcome email
+Subject: ${email.subject}
+Email type: ${email.emailType.replaceAll("_", " ")} email
 Outcome: sent successfully
-Next step: wait for intake form completion or reply.`
+Next step: ${
+        emailType === "preview_ready"
+          ? "wait for approval or revision requests."
+          : "wait for intake form completion or reply."
+      }`
     );
 
     return {
       ok: true,
       recipient: lead.email,
-      subject,
-      emailType: "welcome",
+      subject: email.subject,
+      emailType,
       messageId: result.messageId,
       issueCommentPosted: true
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
+    const subject =
+      emailType === "welcome"
+        ? "Thanks for your enquiry"
+        : emailType === "intake_reminder"
+          ? "Quick follow-up on your website enquiry"
+          : "Your website preview is ready";
 
     await addIssueComment(
       input.issueId,
       `Recipient: ${lead.email}
 Subject: ${subject}
-Email type: welcome email
+Email type: ${emailType.replaceAll("_", " ")} email
 Outcome: failed
 Error: ${message}
 Next step: investigate the email service before retrying.`
@@ -119,13 +128,33 @@ Next step: investigate the email service before retrying.`
       ok: false,
       recipient: lead.email,
       subject,
-      emailType: "welcome",
+      emailType,
       error: message,
       issueCommentPosted: true
     };
   }
 }
 
+export async function send_welcome_email_for_issue(
+  input: SendIssueEmailForIssueInput
+): Promise<SendIssueEmailResult> {
+  return sendIssueEmail(input, "welcome");
+}
+
+export async function send_intake_reminder_email_for_issue(
+  input: SendIssueEmailForIssueInput
+): Promise<SendIssueEmailResult> {
+  return sendIssueEmail(input, "intake_reminder");
+}
+
+export async function send_preview_ready_email_for_issue(
+  input: SendIssueEmailForIssueInput
+): Promise<SendIssueEmailResult> {
+  return sendIssueEmail(input, "preview_ready");
+}
+
 export default {
-  send_welcome_email_for_issue
+  send_welcome_email_for_issue,
+  send_intake_reminder_email_for_issue,
+  send_preview_ready_email_for_issue
 };

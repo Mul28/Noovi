@@ -6,13 +6,15 @@ describe("parseLead", () => {
     const lead = parseLead(`Name: Test Tradie
 Email: test@example.com
 Trade: Plumber
-Message: Need a website`);
+Message: Need a website
+Preview URL: https://preview.noovi.com.au/test`);
 
     expect(lead).toEqual({
       name: "Test Tradie",
       email: "test@example.com",
       trade: "Plumber",
-      message: "Need a website"
+      message: "Need a website",
+      previewUrl: "https://preview.noovi.com.au/test"
     });
   });
 

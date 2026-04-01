@@ -5,7 +5,12 @@ const manifest = {
   workers: [
     {
       name: "head-of-growth-tools",
-      entry: "./src/worker.ts"
+      entry: "./src/worker.ts",
+      actions: [
+        "send_welcome_email_for_issue",
+        "send_intake_reminder_email_for_issue",
+        "send_preview_ready_email_for_issue"
+      ]
     }
   ]
 };
