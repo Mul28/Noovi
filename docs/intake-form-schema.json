@@ -1,0 +1,207 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://noovi.com.au/schemas/intake-form.schema.json",
+  "title": "Noovi Intake Form",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "business_name",
+    "contact_name",
+    "contact_email",
+    "primary_trade",
+    "main_suburb",
+    "service_areas",
+    "core_services",
+    "website_goal",
+    "package_selected",
+    "launch_option"
+  ],
+  "properties": {
+    "business_name": {
+      "type": "string",
+      "minLength": 2
+    },
+    "contact_name": {
+      "type": "string",
+      "minLength": 2
+    },
+    "contact_email": {
+      "type": "string",
+      "format": "email"
+    },
+    "contact_phone": {
+      "type": "string"
+    },
+    "display_phone": {
+      "type": "string"
+    },
+    "display_email": {
+      "type": "string",
+      "format": "email"
+    },
+    "primary_trade": {
+      "type": "string",
+      "minLength": 2
+    },
+    "secondary_trade": {
+      "type": "string"
+    },
+    "main_suburb": {
+      "type": "string",
+      "minLength": 2
+    },
+    "state": {
+      "type": "string",
+      "enum": ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"]
+    },
+    "service_areas": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 2
+      }
+    },
+    "years_in_business": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "licence_details": {
+      "type": "string"
+    },
+    "business_description": {
+      "type": "string"
+    },
+    "differentiators": {
+      "type": "string"
+    },
+    "customer_type": {
+      "type": "string"
+    },
+    "core_services": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 2
+      }
+    },
+    "after_hours_available": {
+      "type": "boolean"
+    },
+    "service_mix": {
+      "type": "string",
+      "enum": ["residential", "commercial", "both"]
+    },
+    "priority_services": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "website_goal": {
+      "type": "string",
+      "enum": [
+        "more_phone_calls",
+        "more_quote_requests",
+        "more_local_visibility",
+        "replace_old_website"
+      ]
+    },
+    "need_domain_help": {
+      "type": "boolean"
+    },
+    "need_hosting_included": {
+      "type": "boolean"
+    },
+    "logo_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "photo_urls": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      }
+    },
+    "brand_colours": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "existing_website_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "google_business_profile_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "jobs_completed": {
+      "type": "string"
+    },
+    "guarantees": {
+      "type": "string"
+    },
+    "awards_or_memberships": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "client_testimonials": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tone_preference": {
+      "type": "string",
+      "enum": ["straightforward", "premium", "friendly", "urgent"]
+    },
+    "reference_websites": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      }
+    },
+    "wording_to_avoid": {
+      "type": "string"
+    },
+    "mandatory_wording": {
+      "type": "string"
+    },
+    "package_selected": {
+      "type": "string",
+      "enum": ["build_only", "build_plus_hosting"]
+    },
+    "domain_name": {
+      "type": "string"
+    },
+    "launch_option": {
+      "type": "string",
+      "enum": ["custom_domain", "noovi_subdomain"]
+    },
+    "form_destination_email": {
+      "type": "string",
+      "format": "email"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "launch_option": {
+            "const": "custom_domain"
+          }
+        }
+      },
+      "then": {
+        "required": ["domain_name"]
+      }
+    }
+  ]
+}
