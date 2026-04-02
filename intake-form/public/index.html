@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Noovi Intake Form</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">Noovi Client Intake</p>
+        <h1>Send through your website brief</h1>
+        <p class="lede">
+          This is the form we use to move your project from enquiry into build.
+          We handle the whole process by email, so there are no calls or meetings required.
+        </p>
+      </section>
+
+      <form id="intake-form" class="card">
+        <section class="group">
+          <h2>Contact details</h2>
+          <div class="grid two">
+            <label>
+              Business name
+              <input name="business_name" required />
+            </label>
+            <label>
+              Contact name
+              <input name="contact_name" required />
+            </label>
+            <label>
+              Contact email
+              <input name="contact_email" type="email" required />
+            </label>
+            <label>
+              Contact phone
+              <input name="contact_phone" />
+            </label>
+            <label>
+              Display phone on website
+              <input name="display_phone" />
+            </label>
+            <label>
+              Display email on website
+              <input name="display_email" type="email" />
+            </label>
+          </div>
+        </section>
+
+        <section class="group">
+          <h2>Trade and location</h2>
+          <div class="grid two">
+            <label>
+              Primary trade
+              <input name="primary_trade" required />
+            </label>
+            <label>
+              Secondary trade or specialties
+              <input name="secondary_trade" />
+            </label>
+            <label>
+              Main suburb
+              <input name="main_suburb" required />
+            </label>
+            <label>
+              State
+              <select name="state">
+                <option value="">Select</option>
+                <option>NSW</option>
+                <option>VIC</option>
+                <option>QLD</option>
+                <option>WA</option>
+                <option>SA</option>
+                <option>TAS</option>
+                <option>ACT</option>
+                <option>NT</option>
+              </select>
+            </label>
+            <label class="wide">
+              Service areas
+              <textarea name="service_areas" required placeholder="One suburb or region per line"></textarea>
+            </label>
+          </div>
+        </section>
+
+        <section class="group">
+          <h2>Business profile</h2>
+          <div class="grid two">
+            <label>
+              Years in business
+              <input name="years_in_business" />
+            </label>
+            <label>
+              Licence or accreditation details
+              <input name="licence_details" />
+            </label>
+            <label class="wide">
+              Short business description
+              <textarea name="business_description"></textarea>
+            </label>
+            <label class="wide">
+              What makes your business different
+              <textarea name="differentiators"></textarea>
+            </label>
+            <label class="wide">
+              Typical customer type
+              <textarea name="customer_type"></textarea>
+            </label>
+          </div>
+        </section>
+
+        <section class="group">
+          <h2>Services and goals</h2>
+          <div class="grid two">
+            <label class="wide">
+              Core services
+              <textarea name="core_services" required placeholder="One service per line"></textarea>
+            </label>
+            <label class="wide">
+              Priority services to feature
+              <textarea name="priority_services" placeholder="One service per line"></textarea>
+            </label>
+            <label>
+              Residential / commercial
+              <select name="service_mix">
+                <option value="">Select</option>
+                <option value="residential">Residential</option>
+                <option value="commercial">Commercial</option>
+                <option value="both">Both</option>
+              </select>
+            </label>
+            <label class="toggle">
+              <input name="after_hours_available" type="checkbox" />
+              Emergency or after-hours availability
+            </label>
+            <label>
+              Main website goal
+              <select name="website_goal" required>
+                <option value="">Select</option>
+                <option value="more_phone_calls">More phone calls</option>
+                <option value="more_quote_requests">More quote requests</option>
+                <option value="more_local_visibility">More local search visibility</option>
+                <option value="replace_old_website">Replace an old website</option>
+              </select>
+            </label>
+            <label>
+              Tone preference
+              <select name="tone_preference">
+                <option value="">Select</option>
+                <option value="straightforward">Straightforward</option>
+                <option value="premium">Premium</option>
+                <option value="friendly">Friendly</option>
+                <option value="urgent">Urgent / emergency focused</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="group">
+          <h2>Branding and trust</h2>
+          <div class="grid two">
+            <label>
+              Logo URL
+              <input name="logo_url" type="url" placeholder="https://..." />
+            </label>
+            <label>
+              Existing website URL
+              <input name="existing_website_url" type="url" placeholder="https://..." />
+            </label>
+            <label>
+              Google Business Profile URL
+              <input name="google_business_profile_url" type="url" placeholder="https://..." />
+            </label>
+            <label>
+              Jobs completed
+              <input name="jobs_completed" />
+            </label>
+            <label class="wide">
+              Photo URLs
+              <textarea name="photo_urls" placeholder="One URL per line"></textarea>
+            </label>
+            <label class="wide">
+              Awards, memberships, or certifications
+              <textarea name="awards_or_memberships" placeholder="One item per line"></textarea>
+            </label>
+            <label class="wide">
+              Client testimonials
+              <textarea name="client_testimonials" placeholder="One testimonial per line"></textarea>
+            </label>
+            <label class="wide">
+              Guarantees or warranties
+              <textarea name="guarantees"></textarea>
+            </label>
+          </div>
+        </section>
+
+        <section class="group">
+          <h2>Launch settings</h2>
+          <div class="grid two">
+            <label>
+              Package selected
+              <select name="package_selected" required>
+                <option value="">Select</option>
+                <option value="build_only">Build only</option>
+                <option value="build_plus_hosting">Build + hosting</option>
+              </select>
+            </label>
+            <label>
+              Launch option
+              <select name="launch_option" id="launch-option" required>
+                <option value="">Select</option>
+                <option value="custom_domain">Custom domain</option>
+                <option value="noovi_subdomain">Noovi subdomain</option>
+              </select>
+            </label>
+            <label id="domain-name-field" class="hidden">
+              Domain name
+              <input name="domain_name" />
+            </label>
+            <label>
+              Form destination email
+              <input name="form_destination_email" type="email" />
+            </label>
+            <label class="toggle">
+              <input name="need_domain_help" type="checkbox" />
+              Need help with domain setup
+            </label>
+            <label class="toggle">
+              <input name="need_hosting_included" type="checkbox" />
+              Need hosting included
+            </label>
+            <label class="wide">
+              Reference websites
+              <textarea name="reference_websites" placeholder="One URL per line"></textarea>
+            </label>
+            <label class="wide">
+              Wording to avoid
+              <textarea name="wording_to_avoid"></textarea>
+            </label>
+            <label class="wide">
+              Mandatory wording or compliance notes
+              <textarea name="mandatory_wording"></textarea>
+            </label>
+          </div>
+        </section>
+
+        <div class="actions">
+          <p class="note">
+            We handle the whole process by email. Once this form is submitted, we’ll move your website into production.
+          </p>
+          <button type="submit">Submit website brief</button>
+        </div>
+
+        <div id="form-status" class="status" aria-live="polite"></div>
+      </form>
+    </main>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
