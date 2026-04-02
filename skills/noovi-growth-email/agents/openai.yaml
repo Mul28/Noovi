@@ -1,0 +1,4 @@
+interface:
+  display_name: "Noovi Growth Email"
+  short_description: "Send deterministic Noovi lead emails from Paperclip issues."
+  default_prompt: "Use this skill to send Noovi welcome, reminder, and preview emails from issue data without improvising shell commands."
