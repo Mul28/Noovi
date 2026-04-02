@@ -58,4 +58,47 @@ describe("bridge intake flow", () => {
     expect(kickoffBody.body).toContain("Process this BUILD issue now.");
     expect(kickoffBody.body).toContain("create_content_issue.mjs");
   });
+
+  it("accepts the public /api/formspree/webhook path", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ id: "issue-456", identifier: "NOO-100" })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ id: "comment-2" })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ id: "comment-3" })
+      });
+
+    vi.stubGlobal("fetch", fetchMock);
+    process.env.RESEND_API_KEY = "";
+
+    const response = await handler({
+      httpMethod: "POST",
+      path: "/api/formspree/webhook",
+      body: JSON.stringify({
+        form: "xreogrkj",
+        submission: {
+          name: "Webhook Test Tradie",
+          email: "test@example.com",
+          phone: "0412 111 222",
+          trade: "Painter",
+          suburb: "Bondi",
+          package: "website-hosting",
+          message: "Need a fresh website and more leads"
+        }
+      })
+    });
+
+    expect(response.statusCode).toBe(201);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+    expect(fetchMock.mock.calls[0]?.[0]).toContain("/api/companies/company-id/issues");
+    expect(fetchMock.mock.calls[1]?.[0]).toContain("/api/issues/issue-456/comments");
+    expect(fetchMock.mock.calls[2]?.[0]).toContain("/api/issues/issue-456/comments");
+  });
 });

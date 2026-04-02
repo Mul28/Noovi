@@ -16,6 +16,20 @@ function json(statusCode, body) {
   };
 }
 
+function normalizeRequestPath(rawPath = "") {
+  if (rawPath.startsWith("/.netlify/functions/bridge")) {
+    const stripped = rawPath.replace(/^\/\.netlify\/functions\/bridge/, "");
+    return stripped || "/";
+  }
+
+  if (rawPath.startsWith("/api")) {
+    const stripped = rawPath.replace(/^\/api/, "");
+    return stripped || "/";
+  }
+
+  return rawPath || "/";
+}
+
 async function createIssue(issuePayload) {
   const apiUrl = process.env.PAPERCLIP_API_URL;
   const apiKey = process.env.PAPERCLIP_API_KEY;
@@ -134,7 +148,7 @@ Next step: investigate email sending before retrying.`
 
 export async function handler(event) {
   try {
-    const path = event.path.replace(/^\/\.netlify\/functions\/bridge/, "");
+    const path = normalizeRequestPath(event.path);
     if (event.httpMethod === "GET" && (path === "/health" || path === "" || path === "/")) {
       return json(200, { ok: true });
     }
