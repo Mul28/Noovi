@@ -70,5 +70,19 @@ Optional environment variables for live Paperclip issue creation:
 - `PAPERCLIP_COMPANY_ID`
 - `PAPERCLIP_PROJECT_ID`
 - `HEAD_OF_DELIVERY_AGENT_ID`
+- `HEAD_OF_GROWTH_AGENT_ID`
 
 Without those values, the form still works in dry-run mode and returns the generated `BUILD` issue payload instead of posting it.
+
+## Lead Ingest Bridge
+
+The same intake server also supports deterministic top-of-funnel lead capture.
+
+Routes:
+
+- `POST /api/lead`
+- `POST /api/formspree/webhook`
+
+Use `POST /api/formspree/webhook` as the bridge for the current `noovi.com.au` landing-page form, which posts to Formspree. A valid webhook submission becomes a real `New Lead: ...` issue in Paperclip, assigned to `Head of Growth` and attached to the configured project.
+
+If `RESEND_API_KEY`, `EMAIL_FROM_ADDRESS`, and `INTAKE_FORM_URL` are set, the lead bridge also sends the welcome email directly and logs the result on the created issue before handing the lead back to `Head of Growth`.
