@@ -1,0 +1,18 @@
+[build]
+  publish = "intake-form/public"
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/bridge/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/start"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/health"
+  to = "/.netlify/functions/bridge/health"
+  status = 200
