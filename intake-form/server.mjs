@@ -146,6 +146,18 @@ async function addIssueComment(issueId, body) {
   return response.json();
 }
 
+async function kickoffBuildIssue(issueId) {
+  return addIssueComment(
+    issueId,
+    [
+      "Process this BUILD issue now.",
+      "Read the intake payload on the issue, create the CONTENT handoff, and stop after logging the result.",
+      'If the repo workspace is available, use:',
+      '`node skills/noovi-delivery-orchestration/scripts/create_content_issue.mjs --issue-id "$PAPERCLIP_TASK_ID"`'
+    ].join("\n")
+  );
+}
+
 async function handleLeadIssueCreation(payload) {
   const issuePayload = buildLeadIssuePayload(payload, {
     assigneeAgentId: process.env.HEAD_OF_GROWTH_AGENT_ID,
@@ -215,6 +227,9 @@ const server = createServer(async (request, response) => {
       });
 
       const result = await createBuildIssue(issuePayload);
+      if (!result.dryRun) {
+        await kickoffBuildIssue(result.issue.id);
+      }
       json(response, result.dryRun ? 202 : 201, {
         ok: true,
         dryRun: result.dryRun,
