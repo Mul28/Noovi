@@ -36,7 +36,14 @@ async function main() {
 
   let emailResult = null;
   if (sendEmail) {
-    emailResult = await sendPreviewReadyEmail(result.reviewIssue.id, process.env);
+    try {
+      emailResult = await sendPreviewReadyEmail(result.reviewIssue.id, process.env);
+    } catch (error) {
+      emailResult = {
+        ok: false,
+        error: error instanceof Error ? error.message : String(error)
+      };
+    }
   }
 
   console.log(
