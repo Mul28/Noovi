@@ -13,6 +13,11 @@
   status = 200
 
 [[redirects]]
+  from = "/preview/*"
+  to = "/.netlify/functions/bridge/preview/:splat"
+  status = 200
+
+[[redirects]]
   from = "/health"
   to = "/.netlify/functions/bridge/health"
   status = 200

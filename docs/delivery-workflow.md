@@ -8,8 +8,8 @@
 4. The bridge creates `BUILD`
 5. The bridge deterministically creates or reuses the child `CONTENT` issue and marks `BUILD` `in_progress`
 6. `Content Lead` returns structured copy
-7. `Head of Delivery` builds preview once content is complete
-8. `Head of Growth` sends review email
+7. A deterministic script creates or reuses the preview URL and `REVIEW` issue
+8. `Head of Growth` (or the deterministic email script) sends the preview email
 9. Revisions loop if needed
 10. Approval triggers payment
 11. Payment triggers `GOLIVE`
@@ -28,6 +28,17 @@ When a valid intake payload is submitted:
 - the bridge marks the `BUILD` issue `in_progress`
 
 This prevents unattended runs from stalling at the `BUILD` stage because `Head of Delivery` failed to create the child `CONTENT` issue.
+
+## Deterministic Preview Handoff
+
+`CONTENT -> REVIEW` now has a deterministic path too.
+
+When a `CONTENT` issue is complete:
+
+- the preview URL is derived from the stable pattern `/preview/:buildIdentifier`
+- the orchestration script creates or reuses the child `REVIEW` issue
+- the `REVIEW` issue stores the preview URL, current revision round, and source issue links
+- the system can then deterministically create `REVISIONS` or `GOLIVE` issues from the `REVIEW` decision
 
 ## Build Gate Checklist
 

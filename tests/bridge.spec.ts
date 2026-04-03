@@ -133,4 +133,80 @@ describe("bridge intake flow", () => {
     expect(fetchMock.mock.calls[1]?.[0]).toContain("/api/issues/issue-456/comments");
     expect(fetchMock.mock.calls[2]?.[0]).toContain("/api/issues/issue-456/comments");
   });
+
+  it("renders a preview page for a BUILD identifier", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ([
+          {
+            id: "build-1",
+            identifier: "NOO-44",
+            title: "BUILD: Smith Plumbing - Plumber",
+            description: [
+              "Intake Payload:",
+              "```json",
+              JSON.stringify(
+                {
+                  business_name: "Smith Plumbing",
+                  contact_email: "sam@smithplumbing.com.au",
+                  primary_trade: "Plumber",
+                  main_suburb: "Marrickville",
+                  service_areas: ["Marrickville", "Newtown"],
+                  core_services: ["Blocked drains", "Hot water systems"]
+                },
+                null,
+                2
+              ),
+              "```"
+            ].join("\n")
+          }
+        ])
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => [{ id: "content-1", identifier: "NOO-45", title: "CONTENT: Smith Plumbing - Plumber" }]
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => [
+          {
+            body: `**Hero headline:** Local Plumbing in Marrickville
+
+**Hero subheadline:** Fast, tidy plumbing for homes.
+
+**Services section:**
+- Blocked drains
+- Hot water systems
+
+**About section:**
+Owner-operated plumber.
+
+**Trust section:**
+- Licensed and insured
+
+**Testimonials section:**
+- [PLACEHOLDER] Great plumber
+
+**SEO title:** Smith Plumbing Marrickville
+
+**SEO meta description:** Local plumbing preview.`
+          }
+        ]
+      });
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    const response = await handler({
+      httpMethod: "GET",
+      path: "/preview/NOO-44",
+      headers: { host: "preview.noovi.com.au", "x-forwarded-proto": "https" }
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.headers["content-type"]).toContain("text/html");
+    expect(response.body).toContain("Local Plumbing in Marrickville");
+    expect(response.body).toContain("preview.noovi.com.au/preview/NOO-44");
+  });
 });

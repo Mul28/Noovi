@@ -86,3 +86,27 @@ Routes:
 Use `POST /api/formspree/webhook` as the bridge for the current `noovi.com.au` landing-page form, which posts to Formspree. A valid webhook submission becomes a real `New Lead: ...` issue in Paperclip, assigned to `Head of Growth` and attached to the configured project.
 
 If `RESEND_API_KEY`, `EMAIL_FROM_ADDRESS`, and `INTAKE_FORM_URL` are set, the lead bridge also sends the welcome email directly and logs the result on the created issue before handing the lead back to `Head of Growth`.
+
+## Deterministic Delivery Workflow
+
+The repo now includes deterministic review-stage orchestration alongside the earlier `BUILD -> CONTENT` handoff.
+
+Available delivery scripts:
+
+- `node skills/noovi-delivery-orchestration/scripts/create_content_issue.mjs --issue-id "$PAPERCLIP_TASK_ID"`
+- `node skills/noovi-delivery-orchestration/scripts/create_review_issue.mjs --content-issue-id "$PAPERCLIP_TASK_ID"`
+- `node skills/noovi-delivery-orchestration/scripts/record_review_decision.mjs --review-issue-id "<id>" --decision changes_requested --requested-changes "..."` 
+- `node skills/noovi-delivery-orchestration/scripts/record_review_decision.mjs --review-issue-id "<id>" --decision approved --payment-confirmed true`
+- `node skills/noovi-delivery-orchestration/scripts/complete_revision_issue.mjs --revision-issue-id "<id>"`
+- `node skills/noovi-delivery-orchestration/scripts/complete_golive_issue.mjs --golive-issue-id "<id>" --live-url "https://..."`
+
+Live preview route:
+
+- `GET /preview/:buildIdentifier`
+
+Live workflow routes:
+
+- `POST /api/review/from-content`
+- `POST /api/review-decision`
+- `POST /api/revision/complete`
+- `POST /api/golive/complete`

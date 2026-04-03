@@ -12,11 +12,30 @@ import {
   findExistingContentIssue
 } from "./lib/delivery.mjs";
 import {
+  completeGoLiveIssue,
+  completeRevisionIssue,
+  ensureReviewIssueForContent,
+  recordReviewDecision
+} from "./lib/review-workflow.mjs";
+import {
   buildLeadIssuePayload,
   normalizeFormspreeWebhookPayload,
   validateLeadPayload
 } from "./lib/lead.mjs";
 import { sendLeadWelcomeEmail } from "./lib/lead-email.mjs";
+import {
+  buildPreviewUrl,
+  extractBuildPayload
+} from "./lib/review.mjs";
+import {
+  getIssue as paperclipGetIssue,
+  getIssueByIdentifier,
+  listIssueComments as paperclipListIssueComments
+} from "./lib/paperclip.mjs";
+import {
+  pickLatestContentComment,
+  renderPreviewHtml
+} from "./lib/preview.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -53,6 +72,11 @@ async function serveStatic(request, response) {
   } catch {
     json(response, 404, { error: "Not found" });
   }
+}
+
+function getRequestBaseUrl(request) {
+  const protocol = request.headers["x-forwarded-proto"] || "http";
+  return `${protocol}://${request.headers.host}`;
 }
 
 async function readJsonBody(request) {
@@ -237,7 +261,12 @@ async function ensureContentIssueForBuild(buildIssue, payload) {
 
   await addIssueComment(
     result.issue.id,
-    "Write the structured copy for this CONTENT issue as a single issue comment using the required section headings, then stop."
+    [
+      "Write the structured copy for this CONTENT issue as a single issue comment using the required section headings.",
+      "When the copy is complete, run:",
+      '`node skills/noovi-delivery-orchestration/scripts/create_review_issue.mjs --content-issue-id "$PAPERCLIP_TASK_ID"`',
+      "Then stop."
+    ].join("\n")
   );
   await addIssueComment(
     buildIssue.id,
@@ -295,10 +324,57 @@ Next step: investigate email sending before retrying.`
   };
 }
 
+async function servePreview(request, response, buildIdentifier) {
+  const buildIssue = await getIssueByIdentifier(buildIdentifier);
+  if (!buildIssue) {
+    response.writeHead(404, { "Content-Type": "text/html; charset=utf-8" });
+    response.end("<h1>Preview not found</h1>");
+    return;
+  }
+
+  const children = await listChildIssues(buildIssue.id);
+  const contentIssue = findExistingContentIssue(children);
+
+  if (!contentIssue) {
+    response.writeHead(409, { "Content-Type": "text/html; charset=utf-8" });
+    response.end("<h1>Preview not ready</h1><p>No CONTENT issue exists yet for this build.</p>");
+    return;
+  }
+
+  const comments = await paperclipListIssueComments(contentIssue.id);
+  const contentComment = pickLatestContentComment(comments);
+
+  if (!contentComment) {
+    response.writeHead(409, { "Content-Type": "text/html; charset=utf-8" });
+    response.end("<h1>Preview not ready</h1><p>Content output is not available yet.</p>");
+    return;
+  }
+
+  const payload = extractBuildPayload(buildIssue.description || "");
+  const previewUrl = buildPreviewUrl(buildIssue, { publicBaseUrl: getRequestBaseUrl(request) });
+  const html = renderPreviewHtml({
+    buildIssue,
+    payload,
+    previewUrl,
+    contentIssue,
+    contentComment
+  });
+
+  response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+  response.end(html);
+}
+
 const server = createServer(async (request, response) => {
   try {
     if (request.method === "GET" && request.url === "/health") {
       json(response, 200, { ok: true });
+      return;
+    }
+
+    if (request.method === "GET" && request.url?.startsWith("/preview/")) {
+      const url = new URL(request.url, `http://${request.headers.host}`);
+      const identifier = url.pathname.replace(/^\/preview\//, "").trim();
+      await servePreview(request, response, identifier);
       return;
     }
 
@@ -327,6 +403,84 @@ const server = createServer(async (request, response) => {
         issue: result.issue || null,
         issuePayload: result.issuePayload
       });
+      return;
+    }
+
+    if (request.method === "POST" && request.url === "/api/review/from-content") {
+      const payload = await readJsonBody(request);
+      if (!payload.content_issue_id) {
+        json(response, 400, { ok: false, error: "content_issue_id is required" });
+        return;
+      }
+
+      const result = await ensureReviewIssueForContent(
+        payload.content_issue_id,
+        { publicBaseUrl: getRequestBaseUrl(request) },
+        process.env
+      );
+      json(response, result.dryRun ? 202 : 201, {
+        ok: true,
+        created: result.created,
+        reviewIssue: result.reviewIssue || null,
+        previewUrl: result.previewUrl
+      });
+      return;
+    }
+
+    if (request.method === "POST" && request.url === "/api/review-decision") {
+      const payload = await readJsonBody(request);
+      if (!payload.review_issue_id || !payload.decision) {
+        json(response, 400, { ok: false, error: "review_issue_id and decision are required" });
+        return;
+      }
+
+      const result = await recordReviewDecision(
+        payload.review_issue_id,
+        {
+          decision: payload.decision,
+          requestedChanges: payload.requested_changes || "",
+          paymentConfirmed: Boolean(payload.payment_confirmed),
+          domainTarget: payload.domain_target || "",
+          liveUrl: payload.live_url || ""
+        },
+        process.env
+      );
+
+      json(response, 200, { ok: true, ...result });
+      return;
+    }
+
+    if (request.method === "POST" && request.url === "/api/revision/complete") {
+      const payload = await readJsonBody(request);
+      if (!payload.revision_issue_id) {
+        json(response, 400, { ok: false, error: "revision_issue_id is required" });
+        return;
+      }
+
+      const result = await completeRevisionIssue(
+        payload.revision_issue_id,
+        { updatedPreviewUrl: payload.updated_preview_url || "" },
+        process.env
+      );
+
+      json(response, 200, { ok: true, ...result });
+      return;
+    }
+
+    if (request.method === "POST" && request.url === "/api/golive/complete") {
+      const payload = await readJsonBody(request);
+      if (!payload.golive_issue_id || !payload.live_url) {
+        json(response, 400, { ok: false, error: "golive_issue_id and live_url are required" });
+        return;
+      }
+
+      const result = await completeGoLiveIssue(
+        payload.golive_issue_id,
+        { liveUrl: payload.live_url, sendEmail: Boolean(payload.send_email) },
+        process.env
+      );
+
+      json(response, 200, { ok: true, ...result });
       return;
     }
 

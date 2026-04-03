@@ -155,7 +155,12 @@ async function main() {
 
   await addIssueComment(
     contentIssue.id,
-    "Write the structured copy for this CONTENT issue as a single issue comment using the required section headings, then stop."
+    [
+      "Write the structured copy for this CONTENT issue as a single issue comment using the required section headings.",
+      "When the copy is complete, run:",
+      '`node skills/noovi-delivery-orchestration/scripts/create_review_issue.mjs --content-issue-id "$PAPERCLIP_TASK_ID"`',
+      "Then stop."
+    ].join("\n")
   );
 
   await addIssueComment(

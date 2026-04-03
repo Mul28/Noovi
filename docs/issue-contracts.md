@@ -71,6 +71,7 @@ Output:
 - seo title
 - seo meta description
 - placeholder testimonials clearly marked
+- deterministic preview handoff to `REVIEW`
 
 ### REVIEW
 
@@ -158,6 +159,7 @@ Must return:
 
 - copy sections only
 - no direct client communication
+- then trigger deterministic `REVIEW` creation using the orchestration script
 
 ### Head of Delivery -> Head of Growth
 
@@ -169,6 +171,11 @@ Allowed when:
 Must create or update:
 
 - `REVIEW` issue with preview URL
+
+Operational note:
+
+- the preferred unattended path is for a deterministic script to create or update the `REVIEW` issue from a completed `CONTENT` issue
+- `Head of Growth` should treat the `REVIEW` issue as the canonical item for preview email, revision tracking, and approval
 
 ## Quality Gates
 

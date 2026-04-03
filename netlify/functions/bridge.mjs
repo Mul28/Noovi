@@ -4,11 +4,29 @@ import {
   findExistingContentIssue
 } from "../../intake-form/lib/delivery.mjs";
 import {
+  completeGoLiveIssue,
+  completeRevisionIssue,
+  ensureReviewIssueForContent,
+  recordReviewDecision
+} from "../../intake-form/lib/review-workflow.mjs";
+import {
   buildLeadIssuePayload,
   normalizeFormspreeWebhookPayload,
   validateLeadPayload
 } from "../../intake-form/lib/lead.mjs";
 import { sendLeadWelcomeEmail } from "../../intake-form/lib/lead-email.mjs";
+import {
+  buildPreviewUrl,
+  extractBuildPayload
+} from "../../intake-form/lib/review.mjs";
+import {
+  getIssueByIdentifier,
+  listIssueComments as paperclipListIssueComments
+} from "../../intake-form/lib/paperclip.mjs";
+import {
+  pickLatestContentComment,
+  renderPreviewHtml
+} from "../../intake-form/lib/preview.mjs";
 
 function json(statusCode, body) {
   return {
@@ -32,6 +50,12 @@ function normalizeRequestPath(rawPath = "") {
   }
 
   return rawPath || "/";
+}
+
+function getEventBaseUrl(event) {
+  const protocol = event.headers?.["x-forwarded-proto"] || "https";
+  const host = event.headers?.host;
+  return host ? `${protocol}://${host}` : "https://golden-cassata-1dcf30.netlify.app";
 }
 
 async function createIssue(issuePayload) {
@@ -178,7 +202,12 @@ async function ensureContentIssueForBuild(buildIssue, payload) {
 
   await addIssueComment(
     result.issue.id,
-    "Write the structured copy for this CONTENT issue as a single issue comment using the required section headings, then stop."
+    [
+      "Write the structured copy for this CONTENT issue as a single issue comment using the required section headings.",
+      "When the copy is complete, run:",
+      '`node skills/noovi-delivery-orchestration/scripts/create_review_issue.mjs --content-issue-id "$PAPERCLIP_TASK_ID"`',
+      "Then stop."
+    ].join("\n")
   );
   await addIssueComment(
     buildIssue.id,
@@ -243,6 +272,57 @@ export async function handler(event) {
       return json(200, { ok: true });
     }
 
+    if (event.httpMethod === "GET" && path.startsWith("/preview/")) {
+      const buildIdentifier = path.replace(/^\/preview\//, "").trim();
+      const buildIssue = await getIssueByIdentifier(buildIdentifier);
+
+      if (!buildIssue) {
+        return {
+          statusCode: 404,
+          headers: { "content-type": "text/html; charset=utf-8" },
+          body: "<h1>Preview not found</h1>"
+        };
+      }
+
+      const children = await listChildIssues(buildIssue.id);
+      const contentIssue = findExistingContentIssue(children);
+
+      if (!contentIssue) {
+        return {
+          statusCode: 409,
+          headers: { "content-type": "text/html; charset=utf-8" },
+          body: "<h1>Preview not ready</h1><p>No CONTENT issue exists yet for this build.</p>"
+        };
+      }
+
+      const comments = await paperclipListIssueComments(contentIssue.id);
+      const contentComment = pickLatestContentComment(comments);
+
+      if (!contentComment) {
+        return {
+          statusCode: 409,
+          headers: { "content-type": "text/html; charset=utf-8" },
+          body: "<h1>Preview not ready</h1><p>Content output is not available yet.</p>"
+        };
+      }
+
+      const payloadFromBuild = extractBuildPayload(buildIssue.description || "");
+      const previewUrl = buildPreviewUrl(buildIssue, { publicBaseUrl: getEventBaseUrl(event) });
+      const html = renderPreviewHtml({
+        buildIssue,
+        payload: payloadFromBuild,
+        previewUrl,
+        contentIssue,
+        contentComment
+      });
+
+      return {
+        statusCode: 200,
+        headers: { "content-type": "text/html; charset=utf-8" },
+        body: html
+      };
+    }
+
     const payload = event.body ? JSON.parse(event.body) : {};
 
     if (event.httpMethod === "POST" && path === "/intake") {
@@ -267,6 +347,73 @@ export async function handler(event) {
         issue: result.issue || null,
         issuePayload: result.issuePayload
       });
+    }
+
+    if (event.httpMethod === "POST" && path === "/review/from-content") {
+      if (!payload.content_issue_id) {
+        return json(400, { ok: false, error: "content_issue_id is required" });
+      }
+
+      const result = await ensureReviewIssueForContent(
+        payload.content_issue_id,
+        { publicBaseUrl: getEventBaseUrl(event) },
+        process.env
+      );
+
+      return json(result.dryRun ? 202 : 201, {
+        ok: true,
+        created: result.created,
+        reviewIssue: result.reviewIssue || null,
+        previewUrl: result.previewUrl
+      });
+    }
+
+    if (event.httpMethod === "POST" && path === "/review-decision") {
+      if (!payload.review_issue_id || !payload.decision) {
+        return json(400, { ok: false, error: "review_issue_id and decision are required" });
+      }
+
+      const result = await recordReviewDecision(
+        payload.review_issue_id,
+        {
+          decision: payload.decision,
+          requestedChanges: payload.requested_changes || "",
+          paymentConfirmed: Boolean(payload.payment_confirmed),
+          domainTarget: payload.domain_target || "",
+          liveUrl: payload.live_url || ""
+        },
+        process.env
+      );
+
+      return json(200, { ok: true, ...result });
+    }
+
+    if (event.httpMethod === "POST" && path === "/revision/complete") {
+      if (!payload.revision_issue_id) {
+        return json(400, { ok: false, error: "revision_issue_id is required" });
+      }
+
+      const result = await completeRevisionIssue(
+        payload.revision_issue_id,
+        { updatedPreviewUrl: payload.updated_preview_url || "" },
+        process.env
+      );
+
+      return json(200, { ok: true, ...result });
+    }
+
+    if (event.httpMethod === "POST" && path === "/golive/complete") {
+      if (!payload.golive_issue_id || !payload.live_url) {
+        return json(400, { ok: false, error: "golive_issue_id and live_url are required" });
+      }
+
+      const result = await completeGoLiveIssue(
+        payload.golive_issue_id,
+        { liveUrl: payload.live_url, sendEmail: Boolean(payload.send_email) },
+        process.env
+      );
+
+      return json(200, { ok: true, ...result });
     }
 
     if (event.httpMethod === "POST" && path === "/lead") {
