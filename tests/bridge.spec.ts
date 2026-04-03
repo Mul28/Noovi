@@ -11,6 +11,7 @@ describe("bridge intake flow", () => {
     process.env.PAPERCLIP_COMPANY_ID = "company-id";
     process.env.PAPERCLIP_PROJECT_ID = "project-id";
     process.env.HEAD_OF_DELIVERY_AGENT_ID = "delivery-agent-id";
+    process.env.CONTENT_LEAD_AGENT_ID = "content-agent-id";
   });
 
   afterEach(() => {
@@ -18,7 +19,7 @@ describe("bridge intake flow", () => {
     vi.restoreAllMocks();
   });
 
-  it("creates a BUILD issue and posts a kickoff comment", async () => {
+  it("creates a BUILD issue, posts a kickoff comment, and creates the CONTENT handoff", async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce({
@@ -28,6 +29,26 @@ describe("bridge intake flow", () => {
       .mockResolvedValueOnce({
         ok: true,
         json: async () => ({ id: "comment-1" })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => []
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ id: "content-123", identifier: "NOO-100", parentId: "issue-123" })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ id: "comment-2" })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ id: "comment-3" })
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ id: "issue-123", status: "in_progress" })
       });
 
     vi.stubGlobal("fetch", fetchMock);
@@ -50,13 +71,24 @@ describe("bridge intake flow", () => {
     });
 
     expect(response.statusCode).toBe(201);
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenCalledTimes(7);
     expect(fetchMock.mock.calls[0]?.[0]).toContain("/api/companies/company-id/issues");
     expect(fetchMock.mock.calls[1]?.[0]).toContain("/api/issues/issue-123/comments");
+    expect(fetchMock.mock.calls[2]?.[0]).toContain("/api/companies/company-id/issues?parentId=issue-123");
+    expect(fetchMock.mock.calls[3]?.[0]).toContain("/api/companies/company-id/issues");
+    expect(fetchMock.mock.calls[4]?.[0]).toContain("/api/issues/content-123/comments");
+    expect(fetchMock.mock.calls[5]?.[0]).toContain("/api/issues/issue-123/comments");
+    expect(fetchMock.mock.calls[6]?.[0]).toContain("/api/issues/issue-123");
 
     const kickoffBody = JSON.parse(fetchMock.mock.calls[1]?.[1]?.body as string);
     expect(kickoffBody.body).toContain("Process this BUILD issue now.");
     expect(kickoffBody.body).toContain("create_content_issue.mjs");
+
+    const contentIssueBody = JSON.parse(fetchMock.mock.calls[3]?.[1]?.body as string);
+    expect(contentIssueBody.title).toBe("CONTENT: Smith Plumbing - Plumber");
+
+    const issueStatusBody = JSON.parse(fetchMock.mock.calls[6]?.[1]?.body as string);
+    expect(issueStatusBody.status).toBe("in_progress");
   });
 
   it("accepts the public /api/formspree/webhook path", async () => {

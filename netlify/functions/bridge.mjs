@@ -1,5 +1,9 @@
 import { buildBuildIssuePayload, validateIntakePayload } from "../../intake-form/lib/intake.mjs";
 import {
+  buildContentIssuePayload,
+  findExistingContentIssue
+} from "../../intake-form/lib/delivery.mjs";
+import {
   buildLeadIssuePayload,
   normalizeFormspreeWebhookPayload,
   validateLeadPayload
@@ -87,6 +91,61 @@ async function addIssueComment(issueId, body) {
   return response.json();
 }
 
+async function updateIssueStatus(issueId, status) {
+  const apiUrl = process.env.PAPERCLIP_API_URL;
+  const apiKey = process.env.PAPERCLIP_API_KEY;
+
+  if (!apiUrl || !apiKey) {
+    return { ok: false, skipped: true };
+  }
+
+  const response = await fetch(
+    `${apiUrl.replace(/\/$/, "")}/api/issues/${issueId}`,
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ status })
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Paperclip issue update failed: ${response.status} ${errorText}`);
+  }
+
+  return response.json();
+}
+
+async function listChildIssues(parentId) {
+  const apiUrl = process.env.PAPERCLIP_API_URL;
+  const apiKey = process.env.PAPERCLIP_API_KEY;
+  const companyId = process.env.PAPERCLIP_COMPANY_ID;
+
+  if (!apiUrl || !apiKey || !companyId) {
+    return [];
+  }
+
+  const response = await fetch(
+    `${apiUrl.replace(/\/$/, "")}/api/companies/${companyId}/issues?parentId=${encodeURIComponent(parentId)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      }
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Paperclip child issue listing failed: ${response.status} ${errorText}`);
+  }
+
+  return response.json();
+}
+
 async function kickoffBuildIssue(issueId) {
   return addIssueComment(
     issueId,
@@ -97,6 +156,37 @@ async function kickoffBuildIssue(issueId) {
       '`node skills/noovi-delivery-orchestration/scripts/create_content_issue.mjs --issue-id "$PAPERCLIP_TASK_ID"`'
     ].join("\n")
   );
+}
+
+async function ensureContentIssueForBuild(buildIssue, payload) {
+  const existing = findExistingContentIssue(await listChildIssues(buildIssue.id));
+
+  if (existing) {
+    await updateIssueStatus(buildIssue.id, "in_progress");
+    await addIssueComment(
+      buildIssue.id,
+      `CONTENT issue already exists: [${existing.identifier}](/NOO/issues/${existing.identifier}).`
+    );
+
+    return { created: false, contentIssue: existing };
+  }
+
+  const issuePayload = buildContentIssuePayload(payload, buildIssue, {
+    assigneeAgentId: process.env.CONTENT_LEAD_AGENT_ID
+  });
+  const result = await createIssue(issuePayload);
+
+  await addIssueComment(
+    result.issue.id,
+    "Write the structured copy for this CONTENT issue as a single issue comment using the required section headings, then stop."
+  );
+  await addIssueComment(
+    buildIssue.id,
+    `Created CONTENT handoff: [${result.issue.identifier}](/NOO/issues/${result.issue.identifier}). Waiting on Content Lead copy before preview build.`
+  );
+  await updateIssueStatus(buildIssue.id, "in_progress");
+
+  return { created: true, contentIssue: result.issue };
 }
 
 async function handleLeadIssueCreation(payload) {
@@ -169,6 +259,7 @@ export async function handler(event) {
       const result = await createIssue(issuePayload);
       if (!result.dryRun) {
         await kickoffBuildIssue(result.issue.id);
+        await ensureContentIssueForBuild(result.issue, validation.value);
       }
       return json(result.dryRun ? 202 : 201, {
         ok: true,

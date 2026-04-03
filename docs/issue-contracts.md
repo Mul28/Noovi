@@ -49,6 +49,11 @@ Output:
 - `CONTENT` issue if copy is needed
 - preview-ready handoff back to `Head of Growth`
 
+Creation rule:
+
+- valid intake submissions must create `BUILD` deterministically through the bridge
+- the bridge must also create or reuse a child `CONTENT` issue and mark `BUILD` `in_progress`
+
 ### CONTENT
 
 Title:
@@ -132,11 +137,16 @@ Must create:
 
 Allowed when:
 
-- build needs copy generation
+- build needs copy generation and no child `CONTENT` issue exists
 
 Must create:
 
 - `CONTENT` issue
+
+Operational note:
+
+- the preferred unattended path is for the bridge or deterministic script to create the child `CONTENT` issue at BUILD creation time
+- `Head of Delivery` should treat existing child `CONTENT` issues as canonical and must not create duplicates
 
 ### Content Lead -> Head of Delivery
 

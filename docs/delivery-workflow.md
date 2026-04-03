@@ -5,15 +5,29 @@
 1. Lead enters from landing page
 2. `Head of Growth` sends welcome email
 3. Lead completes intake form
-4. `Head of Growth` creates `BUILD`
-5. `Head of Delivery` reviews intake and creates `CONTENT`
+4. The bridge creates `BUILD`
+5. The bridge deterministically creates or reuses the child `CONTENT` issue and marks `BUILD` `in_progress`
 6. `Content Lead` returns structured copy
-7. `Head of Delivery` builds preview
+7. `Head of Delivery` builds preview once content is complete
 8. `Head of Growth` sends review email
 9. Revisions loop if needed
 10. Approval triggers payment
 11. Payment triggers `GOLIVE`
 12. `Head of Growth` sends live email
+
+## Deterministic Delivery Handoff
+
+`BUILD -> CONTENT` is no longer dependent on freeform agent behavior.
+
+When a valid intake payload is submitted:
+
+- the bridge creates the `BUILD` issue
+- the bridge posts the delivery kickoff comment
+- the bridge checks for an existing child `CONTENT` issue
+- if none exists, the bridge creates one and assigns it to `Content Lead`
+- the bridge marks the `BUILD` issue `in_progress`
+
+This prevents unattended runs from stalling at the `BUILD` stage because `Head of Delivery` failed to create the child `CONTENT` issue.
 
 ## Build Gate Checklist
 

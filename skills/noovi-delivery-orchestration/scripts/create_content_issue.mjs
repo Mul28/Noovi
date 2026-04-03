@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 
+import {
+  buildContentIssuePayload,
+  findExistingContentIssue as findExistingContentIssueInList
+} from "../../../intake-form/lib/delivery.mjs";
+
 const REQUIRED_FIELDS = [
   "business_name",
   "contact_email",
@@ -79,49 +84,26 @@ function validatePayload(payload) {
   }
 }
 
-function buildContentDescription(payload, buildIssue) {
-  return [
-    `Business Name: ${payload.business_name}`,
-    `Primary Trade: ${payload.primary_trade}`,
-    `Main Suburb: ${payload.main_suburb}`,
-    `Service Areas: ${payload.service_areas.join(", ")}`,
-    `Core Services: ${payload.core_services.join(", ")}`,
-    `Tone Preference: ${payload.tone_preference || "straightforward"}`,
-    `Differentiators: ${payload.differentiators || "Not provided"}`,
-    `Compliance Notes: ${payload.mandatory_wording || "None provided"}`,
-    "",
-    `Source BUILD Issue: [${buildIssue.identifier}](/NOO/issues/${buildIssue.identifier})`,
-    "",
-    "Required output:",
-    "- Hero headline",
-    "- Hero subheadline",
-    "- Services section",
-    "- About section",
-    "- Trust section",
-    "- Testimonials section with [PLACEHOLDER] markers if synthetic",
-    "- SEO title",
-    "- SEO meta description",
-    "",
-    "Intake Payload:",
-    "```json",
-    JSON.stringify(payload, null, 2),
-    "```"
-  ].join("\n");
-}
-
 async function findExistingContentIssue(buildIssueId) {
   const companyId = requireEnv("PAPERCLIP_COMPANY_ID");
   const issues = await paperclipRequest(
     `/api/companies/${companyId}/issues?parentId=${encodeURIComponent(buildIssueId)}`
   );
 
-  return issues.find((issue) => /^CONTENT: /.test(issue.title)) || null;
+  return findExistingContentIssueInList(issues);
 }
 
 async function addIssueComment(issueId, body) {
   return paperclipRequest(`/api/issues/${issueId}/comments`, {
     method: "POST",
     body: JSON.stringify({ body })
+  });
+}
+
+async function updateIssueStatus(issueId, status) {
+  return paperclipRequest(`/api/issues/${issueId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ status })
   });
 }
 
@@ -139,6 +121,7 @@ async function main() {
 
   const existing = await findExistingContentIssue(issueId);
   if (existing) {
+    await updateIssueStatus(issueId, "in_progress");
     await addIssueComment(
       issueId,
       `CONTENT issue already exists: [${existing.identifier}](/NOO/issues/${existing.identifier}).`
@@ -161,20 +144,13 @@ async function main() {
 
   const companyId = requireEnv("PAPERCLIP_COMPANY_ID");
   const contentLeadAgentId = requireEnv("CONTENT_LEAD_AGENT_ID");
-  const title = `CONTENT: ${payload.business_name} - ${payload.primary_trade}`;
-  const description = buildContentDescription(payload, buildIssue);
+  const issuePayload = buildContentIssuePayload(payload, buildIssue, {
+    assigneeAgentId: contentLeadAgentId
+  });
 
   const contentIssue = await paperclipRequest(`/api/companies/${companyId}/issues`, {
     method: "POST",
-    body: JSON.stringify({
-      title,
-      description,
-      priority: "medium",
-      assigneeAgentId: contentLeadAgentId,
-      projectId: buildIssue.projectId,
-      goalId: buildIssue.goalId,
-      parentId: buildIssue.id
-    })
+    body: JSON.stringify(issuePayload)
   });
 
   await addIssueComment(
@@ -183,9 +159,10 @@ async function main() {
   );
 
   await addIssueComment(
-    issueId,
-    `Created CONTENT handoff: [${contentIssue.identifier}](/NOO/issues/${contentIssue.identifier}). Waiting on Content Lead copy before preview build.`
+      issueId,
+      `Created CONTENT handoff: [${contentIssue.identifier}](/NOO/issues/${contentIssue.identifier}). Waiting on Content Lead copy before preview build.`
   );
+  await updateIssueStatus(issueId, "in_progress");
 
   console.log(
     JSON.stringify(
