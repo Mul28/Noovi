@@ -1,261 +1,192 @@
-<!doctype html>
-<html lang="en-AU">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Noovi Intake Form</title>
-    <link rel="stylesheet" href="/styles.css" />
-  </head>
-  <body>
-    <main class="shell">
-      <section class="hero">
-        <p class="eyebrow">Noovi Client Intake</p>
-        <h1>Send through your website brief</h1>
-        <p class="lede">
-          This is the form we use to move your project from enquiry into build.
-          We handle the whole process by email, so there are no calls or meetings required.
-        </p>
-      </section>
-
-      <form id="intake-form" class="card">
-        <section class="group">
-          <h2>Contact details</h2>
-          <div class="grid two">
-            <label>
-              Business name
-              <input name="business_name" required />
-            </label>
-            <label>
-              Contact name
-              <input name="contact_name" required />
-            </label>
-            <label>
-              Contact email
-              <input name="contact_email" type="email" required />
-            </label>
-            <label>
-              Contact phone
-              <input name="contact_phone" />
-            </label>
-            <label>
-              Display phone on website
-              <input name="display_phone" />
-            </label>
-            <label>
-              Display email on website
-              <input name="display_email" type="email" />
-            </label>
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noovi | Websites for Australian Tradies</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#101214;--bg2:#17191c;--bg3:#1f2327;--cream:#efe6da;--text:#f7f1ea;--dark:#181615;--muted:#b7aea3;--muted2:#6b6257;--line:rgba(255,255,255,.09);--accent:#c58945;--accent2:#9c6a31;--shadow:0 24px 70px rgba(0,0,0,.34);--max:1180px}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:"Instrument Sans",sans-serif;background:radial-gradient(circle at top left,rgba(197,137,69,.16),transparent 28%),linear-gradient(180deg,#0d0f11,#111315 42%,#131619);color:var(--text);line-height:1.6;overflow-x:hidden}body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:72px 72px;opacity:.45;pointer-events:none;z-index:-1}a{text-decoration:none;color:inherit}.wrap{width:min(var(--max),calc(100% - 34px));margin:0 auto}.brand,h1,h2,h3,.btn,.price{font-family:"Space Grotesk",sans-serif;letter-spacing:-.04em}.site-header{position:sticky;top:0;z-index:20;background:rgba(12,13,15,.78);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.06)}.nav{min-height:74px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{font-size:1.22rem;font-weight:700}.brand span{color:var(--accent)}.nav-links{display:flex;gap:22px;font-size:.94rem;color:var(--muted)}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 24px;border-radius:999px;font-size:.96rem;font-weight:700;transition:.2s}.btn:hover{transform:translateY(-2px)}.btn.primary{background:linear-gradient(135deg,#d59a56,var(--accent) 55%,var(--accent2));color:#171310;box-shadow:0 14px 32px rgba(197,137,69,.24)}.btn.secondary{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.03)}.eyebrow{display:inline-flex;align-items:center;gap:10px;padding:8px 14px;border-radius:999px;background:rgba(197,137,69,.09);border:1px solid rgba(197,137,69,.2);font-size:.75rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#dcc3a1}.eyebrow:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 8px rgba(197,137,69,.12)}.section{padding:92px 0}.section-head{max-width:760px;margin-bottom:38px}.section-head.center{text-align:center;margin-inline:auto auto}.section-head h2{font-size:clamp(2.2rem,4vw,4rem);line-height:1.02;margin-top:18px}.section-head p{margin-top:14px;color:var(--muted);font-size:1.04rem}.grid{display:grid;gap:16px}.card{border:1px solid var(--line);background:rgba(255,255,255,.03);border-radius:24px;padding:26px}.hero{padding:48px 0 70px;position:relative}.hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:40px;align-items:center}.hero h1{font-size:clamp(3rem,7vw,5.4rem);line-height:.95;margin:18px 0 18px}.hero h1 span{display:block;color:var(--accent)}.lead{max-width:600px;color:var(--muted);font-size:1.14rem}.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin:28px 0}.mini-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 20px;list-style:none}.mini-grid li,.pill{padding:14px 15px;border:1px solid var(--line);background:rgba(255,255,255,.03);border-radius:16px;color:var(--muted);font-size:.92rem}.mini-grid strong,.pill strong{display:block;color:var(--text);margin-bottom:4px}.pill-row{display:flex;flex-wrap:wrap;gap:12px}.showcase{position:relative;padding:24px;border-radius:32px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02)),linear-gradient(140deg,#1e2226,#111316);box-shadow:var(--shadow);overflow:hidden}.showcase:before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(197,137,69,.18),transparent 28%),linear-gradient(180deg,transparent 42%,rgba(197,137,69,.08));pointer-events:none}.screen{position:relative;border-radius:24px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:var(--cream);color:var(--dark)}.topbar{display:flex;gap:8px;align-items:center;padding:14px 16px;background:#ded3c3;border-bottom:1px solid rgba(24,22,21,.08)}.dot{width:10px;height:10px;border-radius:50%;background:rgba(24,22,21,.24)}.url{margin-left:8px;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.62);font-size:.8rem;color:#645b51}.screen-body{display:grid;grid-template-columns:1.08fr .92fr}.screen-copy{padding:34px;background:linear-gradient(180deg,#efe7dc,#eadfce)}.screen-copy small,.screen-side small,.note small{display:inline-block;margin-bottom:14px;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:#8a6c46}.screen-copy h3,.preview-copy h3,.after h4{font-size:2.1rem;line-height:1.02;margin-bottom:12px}.screen-copy p,.screen-side p{color:#655c52;font-size:.94rem}.screen-actions{display:flex;gap:10px;margin:18px 0}.chip-dark,.chip-light{padding:10px 14px;border-radius:999px;font-size:.84rem;font-weight:700}.chip-dark{background:#17191c;color:#f6f0e8}.chip-light{background:rgba(23,25,28,.08);color:#5e564d}.statrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.statrow div{padding:12px;border-radius:14px;background:rgba(255,255,255,.65);border:1px solid rgba(24,22,21,.08);font-size:.78rem;color:#665d53}.statrow strong{display:block;font-size:1.05rem;color:#181615}
+</style>
+<style>
+.screen-side{padding:22px;background:linear-gradient(180deg,#1d2125,#121417);color:var(--text);display:grid;gap:12px;align-content:space-between}.workbox,.sidecard,.website,.device-stage,.quote-card,form{border-radius:24px}.workbox{min-height:214px;padding:18px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(145deg,rgba(197,137,69,.3),rgba(17,19,22,.45));display:flex;flex-direction:column;justify-content:space-between}.workbox span,.label{display:inline-flex;align-items:center;padding:7px 10px;border-radius:999px;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}.workbox span{width:max-content;border:1px solid rgba(255,255,255,.12);color:#dbc8ad}.workbox strong{max-width:220px;font-size:1.3rem;line-height:1.05}.sidecard{padding:16px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03)}.sidecard b{font-size:1.15rem;color:var(--accent)}.mobile-card{position:absolute;right:-12px;bottom:22px;width:194px;padding:14px;border-radius:28px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,#f4ebdf,#e8dbc8);box-shadow:0 24px 45px rgba(0,0,0,.25);color:var(--dark)}.phone{border-radius:20px;overflow:hidden;border:1px solid rgba(24,22,21,.08);background:#fff}.phone-head{padding:14px 16px;background:#17191c;color:#f6f0e8}.phone-head small{display:block;color:rgba(246,240,232,.72);margin-bottom:8px;font-size:.72rem}.phone-head strong{font-size:1.12rem;line-height:1.04}.phone-body{display:grid;gap:12px;padding:14px}.phone-box,.phone-btn{border-radius:15px;border:1px solid rgba(24,22,21,.08)}.phone-box{padding:12px;background:#f5eee4;font-size:.78rem;color:#645b51}.phone-btn{min-height:42px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#d59a56,#b87a37);color:#171310;font-size:.84rem;font-weight:700}.note{position:absolute;left:24px;bottom:20px;max-width:215px;padding:14px 15px;border-radius:18px;background:rgba(12,13,15,.84);border:1px solid rgba(255,255,255,.08);box-shadow:0 14px 24px rgba(0,0,0,.22)}.note strong{display:block;font-size:.98rem;line-height:1.4}.trust{padding:16px 0 20px}.trust-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.trust-card span,.problem p,.step p,.benefit p,.pricing-card p,.faq p,.explain p,.quote-card p,.preview-list li{color:var(--muted)}.light{background:linear-gradient(180deg,#f0e7db,#eadfce);color:var(--dark);position:relative}.light:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 10% 20%,rgba(197,137,69,.11),transparent 30%),linear-gradient(rgba(24,22,21,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(24,22,21,.03) 1px,transparent 1px);background-size:auto,54px 54px,54px 54px;opacity:.6}.light .wrap{position:relative;z-index:1}.light .eyebrow{color:var(--muted2);background:rgba(197,137,69,.12)}.light .section-head p,.light .compare-points{color:var(--muted2)}.problem-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.problem span,.step span,.benefit span{display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;margin-bottom:16px;border-radius:14px;background:rgba(197,137,69,.13);color:var(--accent);font-size:.9rem;font-weight:700}.problem h3,.step h3,.benefit h3,.pricing-card h3,.faq h3,.explain h3,.compare-head h3{font-size:1.14rem;line-height:1.1;margin-bottom:10px}.compare-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.compare-card{padding:22px;border-radius:28px;border:1px solid rgba(24,22,21,.08);background:rgba(255,255,255,.64);box-shadow:0 20px 44px rgba(32,25,14,.08)}.compare-card.aftercard{background:linear-gradient(180deg,rgba(255,251,246,.96),rgba(255,245,232,.96));border-color:rgba(156,106,49,.16)}.compare-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px}.before .label{background:rgba(107,98,89,.12);color:#675f57}.aftercard .label{background:rgba(197,137,69,.14);color:#8b5e28}.website{overflow:hidden;border:1px solid rgba(24,22,21,.08);margin-bottom:16px}.before-site{padding:28px 22px 24px;background:#f5f4f1}.before-site h4{font-size:1.9rem;line-height:1.05;text-align:center;margin-bottom:10px}.before-site p{max-width:300px;margin:0 auto 16px;text-align:center;color:#73787e}.oldbtn{width:max-content;margin:0 auto 16px;padding:11px 17px;border-radius:7px;background:#4f88d2;color:#fff;font-size:.84rem;font-weight:700}.oldgrid,.afterproof{display:grid;gap:10px}.oldgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.oldgrid div,.afterproof div{padding:13px;border-radius:14px;font-size:.8rem}.oldgrid div{background:#e8ebf0;color:#68707a}.after-site{padding:28px 24px 24px;background:linear-gradient(145deg,#111316,#20242a);color:var(--text)}.after-site .topline{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:#dbc5a7;margin-bottom:16px}.after-site h4{max-width:330px}.after-site p{max-width:360px;color:var(--muted);margin:12px 0 16px}.actionrow{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}.actionrow div{padding:11px 15px;border-radius:999px;font-size:.84rem;font-weight:700}.actionrow div:first-child{background:linear-gradient(135deg,#d59a56,#b87a37);color:#171310}.actionrow div:last-child{background:rgba(255,255,255,.06)}.afterproof{grid-template-columns:repeat(3,minmax(0,1fr))}.afterproof div{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:var(--muted)}.afterproof strong{display:block;color:var(--text);font-size:1.02rem}.compare-points{display:grid;gap:10px;list-style:none;font-size:.92rem}.compare-points li{padding-left:18px;position:relative}.compare-points li:before{content:"";position:absolute;left:0;top:10px;width:8px;height:8px;border-radius:50%;background:rgba(197,137,69,.76)}.preview-layout,.cta-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:26px;align-items:center}.preview-list{margin-top:20px;list-style:none}.preview-list li{padding:15px 17px;border:1px solid var(--line);background:rgba(255,255,255,.03)}.device-stage{position:relative;min-height:560px;padding:28px;border:1px solid var(--line);background:radial-gradient(circle at top left,rgba(197,137,69,.14),transparent 30%),linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));overflow:hidden}.device-stage .screen{background:#121518;color:var(--text)}.device-stage .topbar{background:#1b1f22;border-bottom-color:rgba(255,255,255,.06)}.preview-screen{padding:26px;display:grid;grid-template-columns:1.08fr .92fr;gap:18px;background:linear-gradient(145deg,#121518,#1f2328)}.preview-copy h3{font-size:1.95rem;color:var(--text)}.preview-copy p{color:var(--muted)}.tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}.tags div{padding:10px 13px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);font-size:.84rem;font-weight:700}.section-dark{background:linear-gradient(180deg,#131518,#0d0f10)}.steps-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.benefits-grid,.pricing-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.plan{display:inline-flex;padding:7px 11px;border-radius:999px;background:rgba(197,137,69,.14);color:#dcc3a1;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}.pricing-card.featured{transform:translateY(-8px);border-color:rgba(197,137,69,.3);background:radial-gradient(circle at top left,rgba(197,137,69,.14),transparent 34%),rgba(255,255,255,.05)}.price{margin:18px 0 6px;font-size:2.9rem;line-height:1}.price span{font-size:1rem;color:var(--muted);letter-spacing:0}.package-features,.explain-list,.faq-grid,.cta-points{list-style:none}.package-features,.explain-list{margin:20px 0 0}.explain-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.faq-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.cta{padding:92px 0 106px;background:radial-gradient(circle at top left,rgba(197,137,69,.14),transparent 28%),linear-gradient(180deg,#131518,#0d0f10)}.quote-card{padding:30px;background:rgba(255,255,255,.05)}form{padding:30px;background:rgba(11,13,15,.62);backdrop-filter:blur(12px)}.form-title{font-size:1.45rem;line-height:1.06;margin-bottom:10px}.form-sub{color:var(--muted);margin-bottom:20px}.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:grid;gap:8px;margin-bottom:14px}.field.full{grid-column:1/-1}label{font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}input,select{width:100%;min-height:52px;padding:0 16px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:var(--text);font:inherit;appearance:none;outline:none}input::placeholder{color:#8e8479}.form-note{margin-top:12px;font-size:.82rem;color:#93897e;text-align:center}footer{padding:28px 0 36px;border-top:1px solid rgba(255,255,255,.08);background:#0d0f10}.footer-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;color:#8b8277;font-size:.88rem}.reveal{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease}.reveal.is-visible{opacity:1;transform:none}@media (max-width:1100px){.hero-grid,.preview-layout,.cta-grid{grid-template-columns:1fr}.trust-grid,.problem-grid,.steps-grid,.benefits-grid,.pricing-grid,.explain-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.showcase,.device-stage{max-width:760px;margin:0 auto}}@media (max-width:860px){.nav-links{display:none}.mini-grid,.screen-body,.preview-screen,.faq-grid{grid-template-columns:1fr}.mobile-card,.note,.device-stage .mobile-card,.device-stage .note{position:relative;right:auto;left:auto;bottom:auto;width:min(100%,240px);margin:18px auto 0}}@media (max-width:680px){.btn{width:100%}.hero-actions{flex-direction:column}.trust-grid,.problem-grid,.steps-grid,.benefits-grid,.pricing-grid,.compare-grid,.explain-grid,.faq-grid,.field-grid{grid-template-columns:1fr}.hero h1{font-size:clamp(2.6rem,13vw,4rem)}.section,.cta{padding:76px 0}.footer-inner{flex-direction:column;text-align:center}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap nav">
+    <a href="#" class="brand">Noovi<span>.</span></a>
+    <div class="nav-links"><a href="#before-after">Before / After</a><a href="#preview">Preview</a><a href="#pricing">Pricing</a></div>
+    <a href="#get-started" class="btn primary">Get my website</a>
+  </div>
+</header>
+<main>
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="reveal">
+      <div class="eyebrow">Websites for Australian tradies</div>
+      <h1>Look professional online.<span>Win better enquiries.</span></h1>
+      <p class="lead">Noovi builds fast, polished websites for tradies who want to look established, earn trust faster and make it easier for customers to contact or book.</p>
+      <div class="hero-actions"><a href="#get-started" class="btn primary">Start my website</a><a href="#before-after" class="btn secondary">See the difference</a></div>
+      <ul class="mini-grid">
+        <li><strong>Built to convert</strong>Clear offer, clear proof, clear next step.</li>
+        <li><strong>Fast turnaround</strong>Live in 7 business days once we have the basics.</li>
+        <li><strong>Low hassle</strong>No tech setup and no confusing process.</li>
+      </ul>
+      <div class="pill-row"><div class="pill"><strong>100% Australian</strong> built and managed</div><div class="pill"><strong>Custom look</strong> without agency bloat</div><div class="pill"><strong>Hosting and booking</strong> available</div></div>
+    </div>
+    <div class="showcase reveal">
+      <div class="screen">
+        <div class="topbar"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="url">harbourlineelectrical.com.au</div></div>
+        <div class="screen-body">
+          <div class="screen-copy">
+            <small>Local electrician - Northern Beaches</small>
+            <h3>Fast callouts. Clean work. Clear communication.</h3>
+            <p>Switchboard upgrades, rewiring, lighting and fault finding for homes and small commercial jobs. Easy to contact, easy to trust, easy to book.</p>
+            <div class="screen-actions"><div class="chip-dark">Book a quote</div><div class="chip-light">View recent work</div></div>
+            <div class="statrow"><div><strong>240+</strong>jobs completed</div><div><strong>5.0</strong>Google rating</div><div><strong>24hr</strong>quote response</div></div>
           </div>
-        </section>
-
-        <section class="group">
-          <h2>Trade and location</h2>
-          <div class="grid two">
-            <label>
-              Primary trade
-              <input name="primary_trade" required />
-            </label>
-            <label>
-              Secondary trade or specialties
-              <input name="secondary_trade" />
-            </label>
-            <label>
-              Main suburb
-              <input name="main_suburb" required />
-            </label>
-            <label>
-              State
-              <select name="state">
-                <option value="">Select</option>
-                <option>NSW</option>
-                <option>VIC</option>
-                <option>QLD</option>
-                <option>WA</option>
-                <option>SA</option>
-                <option>TAS</option>
-                <option>ACT</option>
-                <option>NT</option>
-              </select>
-            </label>
-            <label class="wide">
-              Service areas
-              <textarea name="service_areas" required placeholder="One suburb or region per line"></textarea>
-            </label>
+          <div class="screen-side">
+            <div class="workbox"><span>Featured project</span><strong>New lighting and switchboard upgrade for a family home in Manly.</strong></div>
+            <div class="sidecard"><strong>Service areas</strong><p>Manly, Dee Why, Brookvale, Mosman</p></div>
+            <div class="sidecard"><strong>Customer proof</strong><p>"Turned up on time and made it simple."</p><b>5 star</b></div>
           </div>
-        </section>
-
-        <section class="group">
-          <h2>Business profile</h2>
-          <div class="grid two">
-            <label>
-              Years in business
-              <input name="years_in_business" />
-            </label>
-            <label>
-              Licence or accreditation details
-              <input name="licence_details" />
-            </label>
-            <label class="wide">
-              Short business description
-              <textarea name="business_description"></textarea>
-            </label>
-            <label class="wide">
-              What makes your business different
-              <textarea name="differentiators"></textarea>
-            </label>
-            <label class="wide">
-              Typical customer type
-              <textarea name="customer_type"></textarea>
-            </label>
-          </div>
-        </section>
-
-        <section class="group">
-          <h2>Services and goals</h2>
-          <div class="grid two">
-            <label class="wide">
-              Core services
-              <textarea name="core_services" required placeholder="One service per line"></textarea>
-            </label>
-            <label class="wide">
-              Priority services to feature
-              <textarea name="priority_services" placeholder="One service per line"></textarea>
-            </label>
-            <label>
-              Residential / commercial
-              <select name="service_mix">
-                <option value="">Select</option>
-                <option value="residential">Residential</option>
-                <option value="commercial">Commercial</option>
-                <option value="both">Both</option>
-              </select>
-            </label>
-            <label class="toggle">
-              <input name="after_hours_available" type="checkbox" />
-              Emergency or after-hours availability
-            </label>
-            <label>
-              Main website goal
-              <select name="website_goal" required>
-                <option value="">Select</option>
-                <option value="more_phone_calls">More phone calls</option>
-                <option value="more_quote_requests">More quote requests</option>
-                <option value="more_local_visibility">More local search visibility</option>
-                <option value="replace_old_website">Replace an old website</option>
-              </select>
-            </label>
-            <label>
-              Tone preference
-              <select name="tone_preference">
-                <option value="">Select</option>
-                <option value="straightforward">Straightforward</option>
-                <option value="premium">Premium</option>
-                <option value="friendly">Friendly</option>
-                <option value="urgent">Urgent / emergency focused</option>
-              </select>
-            </label>
-          </div>
-        </section>
-
-        <section class="group">
-          <h2>Branding and trust</h2>
-          <div class="grid two">
-            <label>
-              Logo URL
-              <input name="logo_url" type="url" placeholder="https://..." />
-            </label>
-            <label>
-              Existing website URL
-              <input name="existing_website_url" type="url" placeholder="https://..." />
-            </label>
-            <label>
-              Google Business Profile URL
-              <input name="google_business_profile_url" type="url" placeholder="https://..." />
-            </label>
-            <label>
-              Jobs completed
-              <input name="jobs_completed" />
-            </label>
-            <label class="wide">
-              Photo URLs
-              <textarea name="photo_urls" placeholder="One URL per line"></textarea>
-            </label>
-            <label class="wide">
-              Awards, memberships, or certifications
-              <textarea name="awards_or_memberships" placeholder="One item per line"></textarea>
-            </label>
-            <label class="wide">
-              Client testimonials
-              <textarea name="client_testimonials" placeholder="One testimonial per line"></textarea>
-            </label>
-            <label class="wide">
-              Guarantees or warranties
-              <textarea name="guarantees"></textarea>
-            </label>
-          </div>
-        </section>
-
-        <section class="group">
-          <h2>Launch settings</h2>
-          <div class="grid two">
-            <label>
-              Package selected
-              <select name="package_selected" required>
-                <option value="">Select</option>
-                <option value="build_only">Build only</option>
-                <option value="build_plus_hosting">Build + hosting</option>
-              </select>
-            </label>
-            <label>
-              Launch option
-              <select name="launch_option" id="launch-option" required>
-                <option value="">Select</option>
-                <option value="custom_domain">Custom domain</option>
-                <option value="noovi_subdomain">Noovi subdomain</option>
-              </select>
-            </label>
-            <label id="domain-name-field" class="hidden">
-              Domain name
-              <input name="domain_name" />
-            </label>
-            <label>
-              Form destination email
-              <input name="form_destination_email" type="email" />
-            </label>
-            <label class="toggle">
-              <input name="need_domain_help" type="checkbox" />
-              Need help with domain setup
-            </label>
-            <label class="toggle">
-              <input name="need_hosting_included" type="checkbox" />
-              Need hosting included
-            </label>
-            <label class="wide">
-              Reference websites
-              <textarea name="reference_websites" placeholder="One URL per line"></textarea>
-            </label>
-            <label class="wide">
-              Wording to avoid
-              <textarea name="wording_to_avoid"></textarea>
-            </label>
-            <label class="wide">
-              Mandatory wording or compliance notes
-              <textarea name="mandatory_wording"></textarea>
-            </label>
-          </div>
-        </section>
-
-        <div class="actions">
-          <p class="note">
-            We handle the whole process by email. Once this form is submitted, we’ll move your website into production.
-          </p>
-          <button type="submit">Submit website brief</button>
         </div>
-
-        <div id="form-status" class="status" aria-live="polite"></div>
-      </form>
-    </main>
-
-    <script type="module" src="/app.js"></script>
-  </body>
+      </div>
+      <div class="mobile-card"><div class="phone"><div class="phone-head"><small>Mobile view</small><strong>Ready to book a local sparkie?</strong></div><div class="phone-body"><div class="phone-box">Fast callouts - licensed - fully insured</div><div class="phone-box"><strong>Recent review</strong><br>Easy booking, tidy work and no chasing around.</div><div class="phone-btn">Choose a time</div></div></div></div>
+      <div class="note"><small>Visual hook</small><strong>Your customer should picture the finished result in seconds.</strong></div>
+    </div>
+  </div>
+</section>
+<section class="trust">
+  <div class="wrap grid trust-grid reveal">
+    <div class="trust-card card"><strong>Looks established fast</strong><span>More trust than a bare Facebook page or half-finished site.</span></div>
+    <div class="trust-card card"><strong>Easy for customers to act</strong><span>Clear buttons, enquiry forms and booking options that make sense.</span></div>
+    <div class="trust-card card"><strong>Built for tradie buyers</strong><span>Simple copy, strong proof and suburb-focused positioning.</span></div>
+    <div class="trust-card card"><strong>Practical, not fluffy</strong><span>No agency theatre. Just a sharper online presence that helps you win work.</span></div>
+  </div>
+</section>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal"><div class="eyebrow">Why good tradies miss out</div><h2>Customers judge the business before they ever judge the work.</h2><p>If the website feels weak, flat or hard to trust, you get lumped in with every other average operator. The right site makes people think, "These guys look professional and easy to deal with."</p></div>
+    <div class="grid problem-grid">
+      <article class="problem card reveal"><span>01</span><h3>Average design makes you look cheaper</h3><p>If the site looks generic, customers assume the business is generic too. That pushes you into price-shopping territory.</p></article>
+      <article class="problem card reveal"><span>02</span><h3>No proof means no confidence</h3><p>Without reviews, suburb coverage, service clarity and a strong first impression, people keep browsing and call someone else.</p></article>
+      <article class="problem card reveal"><span>03</span><h3>Messy mobile layouts lose real enquiries</h3><p>Most tradie searches happen on a phone. If the mobile view is clunky, your next customer drops off before they contact you.</p></article>
+      <article class="problem card reveal"><span>04</span><h3>Hard contact flow creates phone tag</h3><p>Busy customers want the fastest next step. If they cannot enquire or book quickly, the lead disappears.</p></article>
+    </div>
+  </div>
+</section>
+<section class="section light" id="before-after">
+  <div class="wrap">
+    <div class="section-head center reveal"><div class="eyebrow">Before and after</div><h2>Same business. Completely different first impression.</h2><p>Here is a fake tradie example so the contrast is obvious. The before looks weak and forgettable. The Noovi-style after looks trustworthy, easier to book and worth paying attention to.</p></div>
+    <div class="grid compare-grid">
+      <article class="compare-card before reveal">
+        <div class="compare-head"><h3>Before: Westline Plumbing</h3><div class="label">Outdated</div></div>
+        <div class="website"><div class="topbar"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="before-site"><h4>Westline Plumbing</h4><p>Plumbing services for homes and businesses. Contact us today for great service.</p><div class="oldbtn">Contact us</div><div class="oldgrid"><div>Generic services</div><div>No suburb proof</div><div>No visual story</div><div>Weak trust signals</div></div></div></div>
+        <ul class="compare-points"><li>Looks like a stock template with the name dropped in.</li><li>No clear reason to trust them or choose them.</li><li>The call to action exists, but the page creates very little confidence.</li></ul>
+      </article>
+      <article class="compare-card aftercard reveal">
+        <div class="compare-head"><h3>After: Westline Plumbing Co.</h3><div class="label">Noovi upgrade</div></div>
+        <div class="website"><div class="topbar"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="after-site"><div class="topline">Emergency plumbing - Inner West - 5 star rated</div><h4>Professional plumbing with faster response and clearer next steps.</h4><p>Blocked drains, hot water and leaking pipe repairs across Sydney's Inner West. Trusted locally, easy to reach and built to make the customer feel looked after.</p><div class="actionrow"><div>Book a callout</div><div>See recent jobs</div></div><div class="afterproof"><div><strong>18 years</strong>local experience</div><div><strong>5.0 stars</strong>review-ready trust</div><div><strong>24/7</strong>clear response promise</div></div></div></div>
+        <ul class="compare-points"><li>Sharper hierarchy, stronger trust signals and a clearer reason to enquire.</li><li>Feels like a real business, not a filler template.</li><li>Shows proof, location and action points immediately, which helps the page convert.</li></ul>
+      </article>
+    </div>
+  </div>
+</section>
+<section class="section" id="preview">
+  <div class="wrap preview-layout">
+    <div class="reveal">
+      <div class="section-head"><div class="eyebrow">Desktop and mobile preview</div><h2>Give tradies something they can actually picture owning.</h2><p>The website should not feel like a vague promise. It should help a tradie instantly imagine customers landing on a polished desktop site, then getting the same clean experience on mobile.</p></div>
+      <ul class="preview-list"><li><strong>Desktop gives the business weight</strong>Stronger sections, project highlights, proof and clear service areas make the company feel established.</li><li><strong>Mobile keeps it simple</strong>Fast to scan, easy to tap, no clutter and a clear contact or booking action.</li><li><strong>The whole thing feels intentional</strong>Typography, spacing and contrast do the heavy lifting without confusing the customer.</li></ul>
+    </div>
+    <div class="device-stage reveal">
+      <div class="screen"><div class="topbar"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="url">masonandbeam.com.au</div></div><div class="preview-screen"><div class="preview-copy"><small style="display:inline-block;color:#dbc5a7;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px">Example customer site</small><h3>Carpentry that lifts the finish of the whole home.</h3><p>Custom decks, fit-outs and renovations for Sydney homeowners who care about detail, clean workmanship and a reliable crew.</p><div class="tags"><div>Licensed and insured</div><div>Detailed quotes</div><div>Book a site visit</div></div></div><div class="screen-side"><div class="sidecard"><strong>Recent work</strong><p>Spotted gum deck with built-in bench seating and privacy screen.</p></div><div class="sidecard"><strong>200+ projects</strong><p>Numbers work harder when they are presented cleanly.</p></div></div></div></div>
+      <div class="mobile-card"><div class="phone"><div class="phone-head"><small>Mobile booking flow</small><strong>Need a quote for a new deck?</strong></div><div class="phone-body"><div class="phone-box">Sydney carpentry - custom decks - renovations</div><div class="phone-box"><strong>What the customer sees</strong><br>Strong headline, local trust, recent review and one clear next step.</div><div class="phone-btn">Book a site visit</div></div></div></div>
+      <div class="note"><small>What tradies are buying</small><strong>A cleaner brand impression on every screen.</strong></div>
+    </div>
+  </div>
+</section>
+<section class="section section-dark">
+  <div class="wrap">
+    <div class="section-head reveal"><div class="eyebrow">How it works</div><h2>Simple process. Stronger result.</h2><p>The offer stays easy to understand. We just make the finished product look significantly better and more useful than a cheap template.</p></div>
+    <div class="grid steps-grid">
+      <article class="step card reveal"><span>01</span><h3>You send the basics</h3><p>Trade, suburb, business details and a few notes about the jobs you want more of.</p></article>
+      <article class="step card reveal"><span>02</span><h3>We write and design it</h3><p>Copy, layout, trust signals and visual presentation are all handled for you.</p></article>
+      <article class="step card reveal"><span>03</span><h3>You review the draft</h3><p>We send a live preview so you can check it properly. Two revision rounds are included.</p></article>
+      <article class="step card reveal"><span>04</span><h3>Go live and start using it</h3><p>Your website is ready to take enquiries, support referrals and make the business look more professional.</p></article>
+    </div>
+    <div class="grid benefits-grid" style="margin-top:16px"><article class="benefit card reveal"><span>A</span><h3>Sharper copy presentation</h3><p>Less waffle, clearer offer, easier scanning and stronger calls to action.</p></article><article class="benefit card reveal"><span>B</span><h3>More visual storytelling</h3><p>Preview panels, proof blocks and stronger section contrast make the page feel designed, not auto-generated.</p></article><article class="benefit card reveal"><span>C</span><h3>Commercially useful design</h3><p>Everything is there to help a tradie look easier to trust and easier to contact.</p></article></div>
+  </div>
+</section>
+<section class="section" id="pricing">
+  <div class="wrap">
+    <div class="section-head reveal"><div class="eyebrow">Straight pricing</div><h2>Pick the setup that suits how hands-off you want to be.</h2><p>All prices are in AUD and exclude GST. The main difference is whether you want us to keep everything running for you, and whether you want online booking built in.</p></div>
+    <div class="grid pricing-grid">
+      <article class="pricing-card card reveal"><div class="plan">Launch</div><h3>Website Only</h3><p>Best if you want the site built professionally, then hosted yourself.</p><div class="price">$1,500 <span>one-off</span></div><ul class="package-features"><li><strong>Custom tradie website</strong> built around your services and suburb.</li><li><strong>Mobile and desktop ready</strong> with enquiry form and clear calls to action.</li><li><strong>SEO setup included</strong> so Google understands the basics properly.</li><li><strong>2 revision rounds</strong> and delivery in 7 business days.</li></ul><a href="#get-started" class="btn secondary">Choose launch</a></article>
+      <article class="pricing-card card featured reveal"><div class="plan">Most popular</div><h3>Website + Hosting</h3><p>Best for tradies who want the website sorted properly without touching the technical side.</p><div class="price">$1,500 <span>+ $39 / month</span></div><ul class="package-features"><li><strong>Everything in Website Only</strong> plus managed hosting.</li><li><strong>We keep it live</strong> so customers can always find it and use it.</li><li><strong>Security, updates and backups</strong> handled in the background.</li><li><strong>Less hassle</strong> and a cleaner professional setup long term.</li></ul><a href="#get-started" class="btn primary">Choose managed</a></article>
+      <article class="pricing-card card reveal"><div class="plan">Premium</div><h3>Website + Hosting + Booking</h3><p>Best if you want the website to help with scheduling as well as enquiries.</p><div class="price">$1,500 <span>+ $64 / month</span></div><ul class="package-features"><li><strong>Everything in Hosting</strong> plus online booking built into the site.</li><li><strong>Customers can pick a time</strong> instead of playing phone tag.</li><li><strong>Email confirmations and calendar sync</strong> make the process feel more professional.</li><li><strong>Ideal for busy tradies</strong> who want fewer missed opportunities.</li></ul><a href="#get-started" class="btn secondary">Choose booking</a></article>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal"><div class="eyebrow">Plain-English extras</div><h2>What hosting and Calendly actually mean for a busy tradie.</h2><p>No jargon. Just the practical outcome.</p></div>
+    <div class="grid explain-grid">
+      <article class="explain card reveal"><div class="eyebrow">Hosting</div><h3>Your website stays live without you touching anything.</h3><p>Hosting is the service that keeps your website on the internet so customers can load it any time they search for you. On our managed option, we handle the behind-the-scenes stuff so the site stays up, loads properly and keeps doing its job.</p><ul class="explain-list"><li><strong>Website stays live</strong> even while you are on the tools.</li><li><strong>Less hassle</strong> because updates, backups and security are handled for you.</li><li><strong>More professional image</strong> because the site feels reliable and looked after.</li></ul></article>
+      <article class="explain card reveal"><div class="eyebrow">Calendly</div><h3>Customers can book a time without chasing you on the phone.</h3><p>Calendly is a simple booking tool that sits on your website. Instead of calling three times or waiting for a reply, people can choose an available time, get confirmation straight away and show up already organised.</p><ul class="explain-list"><li><strong>Easier bookings</strong> because customers can act while they are already interested.</li><li><strong>Less phone tag</strong> and fewer missed leads when you are busy on site.</li><li><strong>Cleaner experience</strong> with confirmations, reminders and easier rescheduling.</li></ul></article>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <div class="wrap">
+    <div class="section-head reveal"><div class="eyebrow">Questions</div><h2>What tradies usually ask before they start.</h2></div>
+    <div class="grid faq-grid">
+      <article class="faq card reveal"><h3>Do I own the website?</h3><p>Yes. The website is yours. If you stop hosting with us, we hand over the files.</p></article>
+      <article class="faq card reveal"><h3>What if I want changes?</h3><p>Two revision rounds are included during the build. If you want updates later, we handle those separately and keep it straightforward.</p></article>
+      <article class="faq card reveal"><h3>I am not tech-savvy. Is that a problem?</h3><p>No. This is built for low-tech business owners. You provide the basics and we handle the rest.</p></article>
+      <article class="faq card reveal"><h3>How long until it is live?</h3><p>Usually 7 business days once we have what we need from you.</p></article>
+      <article class="faq card reveal"><h3>Why add online booking?</h3><p>Because it gives people a next step they can take immediately, even when you are flat out and not answering the phone.</p></article>
+      <article class="faq card reveal"><h3>Will it still feel practical?</h3><p>Yes. The aim is not to look flashy. The aim is to look solid, trustworthy and easier to deal with.</p></article>
+    </div>
+  </div>
+</section>
+<section class="cta" id="get-started">
+  <div class="wrap cta-grid">
+    <div class="quote-card reveal">
+      <div class="eyebrow">Get started</div>
+      <h2 style="font-size:clamp(2.1rem,4vw,3.5rem);line-height:1.02;margin:18px 0 14px">Make the business look more professional online without turning it into a project.</h2>
+      <p>That is the real sell. A sharper website, a cleaner impression and an easier path for customers to contact you or book. No agency fluff. No technical headache.</p>
+      <ul class="cta-points" style="margin-top:20px"><li><strong>No meetings needed</strong> unless you want them.</li><li><strong>No phone calls required</strong> if email is easier.</li><li><strong>No confusing setup</strong> because we build around plain-English inputs.</li><li><strong>No cheap-template feeling</strong> because the presentation is designed to look considered.</li></ul>
+    </div>
+    <form action="https://formspree.io/f/xreogrkj" method="POST" class="reveal">
+      <div class="form-title">Tell us about your business</div>
+      <p class="form-sub">We will reply within 24 hours and let you know the best package for your setup. All prices exclude GST.</p>
+      <div class="field-grid">
+        <div class="field"><label for="name">Your name</label><input type="text" id="name" name="name" placeholder="Steve Wilson" required></div>
+        <div class="field"><label for="phone">Phone number</label><input type="tel" id="phone" name="phone" placeholder="04XX XXX XXX"></div>
+        <div class="field full"><label for="email">Email</label><input type="email" id="email" name="email" placeholder="steve@yourbusiness.com.au" required></div>
+        <div class="field"><label for="trade">Trade</label><select id="trade" name="trade" required><option value="" disabled selected>Select trade</option><option>Plumber</option><option>Electrician</option><option>Builder / Carpenter</option><option>Painter</option><option>Tiler</option><option>Landscaper</option><option>Concreter</option><option>Air Con / HVAC</option><option>Roofer</option><option>Fencer</option><option>Glazier</option><option>Handyman</option><option>Demolition</option><option>Plasterer</option><option>Pest Control</option><option>Other</option></select></div>
+        <div class="field"><label for="suburb">Suburb</label><input type="text" id="suburb" name="suburb" placeholder="e.g. Parramatta, NSW"></div>
+        <div class="field full"><label for="package">Package</label><select id="package" name="package"><option value="website-only">Website Only - $1,500 + GST</option><option value="website-hosting" selected>Website + Hosting - $1,500 + GST + $39 / month + GST</option><option value="website-hosting-booking">Website + Hosting + Booking - $1,500 + GST + $64 / month + GST</option></select></div>
+      </div>
+      <button type="submit" class="btn primary" style="width:100%;margin-top:8px">Send my enquiry</button>
+      <div class="form-note">No spam. No hard sell. Just a clear next step for getting your website sorted.</div>
+    </form>
+  </div>
+</section>
+</main>
+<footer>
+  <div class="wrap footer-inner"><div class="brand">Noovi<span>.</span></div><div>&copy; 2026 Noovi. ABN 70 717 943 099</div><a href="mailto:hello@noovi.com.au">hello@noovi.com.au</a></div>
+</footer>
+<script>
+const reveals=document.querySelectorAll('.reveal');
+const io=new IntersectionObserver((entries)=>{entries.forEach((entry)=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');io.unobserve(entry.target);}})},{threshold:.14});
+reveals.forEach((el)=>io.observe(el));
+</script>
+</body>
 </html>
